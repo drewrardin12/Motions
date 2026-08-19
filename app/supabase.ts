@@ -8,19 +8,42 @@ function savedSession(): Session | null {
   try { return JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); } catch { return null; }
 }
 
+function storeSession(data: unknown): Session {
+  const response = data as { session?: Session; access_token?: string; refresh_token?: string; expires_at?: number } | null;
+  const session = response?.session ?? response;
+  if (!session?.access_token || !session.refresh_token) {
+    throw new Error("Supabase did not return a valid sign-in session.");
+  }
+  localStorage.setItem(AUTH_KEY, JSON.stringify(session));
+  return session as Session;
+}
+
+async function refreshSession(saved: Session): Promise<Session | null> {
+  if (!saved.refresh_token) return null;
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+    method: "POST",
+    headers: { apikey: SUPABASE_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh_token: saved.refresh_token }),
+  });
+  if (!res.ok) return null;
+  return storeSession(await res.json());
+}
+
 async function anonymousSession(): Promise<Session> {
   const saved = savedSession();
-  if (saved?.access_token) return saved;
+  const now = Math.floor(Date.now() / 1000);
+  if (saved?.access_token && (!saved.expires_at || saved.expires_at > now + 60)) return saved;
+  if (saved) {
+    const refreshed = await refreshSession(saved);
+    if (refreshed) return refreshed;
+  }
   const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
     method: "POST",
     headers: { apikey: SUPABASE_KEY, "Content-Type": "application/json" },
     body: JSON.stringify({}),
   });
   if (!res.ok) throw new Error("Anonymous sign-in is not enabled yet.");
-  const data = await res.json();
-  const session = data.session as Session;
-  localStorage.setItem(AUTH_KEY, JSON.stringify(session));
-  return session;
+  return storeSession(await res.json());
 }
 
 export async function rpc<T>(name: string, body: Record<string, unknown> = {}): Promise<T> {
