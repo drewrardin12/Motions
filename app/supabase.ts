@@ -59,11 +59,21 @@ export async function rpc<T>(name: string, body: Record<string, unknown> = {}): 
 }
 
 export type HouseholdMember = { id: string; name: string; is_admin: boolean };
-export type HouseholdState = { household_id: string; household_name: string; members: HouseholdMember[] };
+export type HouseholdState = { household_id: string; household_name: string; members: HouseholdMember[]; remembered_member_id?: string | null };
+export type ProgressRow = { period_key: string; item_type: string; item_id: string; completed: boolean; updated_by_name: string | null; updated_at: string };
 
 export const householdApi = {
   mine: () => rpc<HouseholdState | null>("get_my_household"),
   create: (andrewPin: string, abbyPin: string) => rpc<{ household: HouseholdState; join_code: string }>("create_motions_household", { p_andrew_pin: andrewPin, p_abby_pin: abbyPin }),
   join: (code: string) => rpc<HouseholdState>("join_motions_household", { p_join_code: code.toUpperCase().replace(/\s/g, "") }),
   verify: (memberId: string, pin: string) => rpc<boolean>("verify_member_pin", { p_member_id: memberId, p_pin: pin }),
+  remember: (memberId: string, pin: string) => rpc<boolean>("remember_member", { p_member_id: memberId, p_pin: pin }),
+  progress: (periodKeys: string[]) => rpc<ProgressRow[]>("get_household_progress", { p_period_keys: periodKeys }),
+  setProgress: (memberId: string, periodKey: string, itemType: string, itemId: string, completed: boolean) => rpc<boolean>("set_household_progress", {
+    p_member_id: memberId,
+    p_period_key: periodKey,
+    p_item_type: itemType,
+    p_item_id: itemId,
+    p_completed: completed,
+  }),
 };
