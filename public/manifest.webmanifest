@@ -1,1 +1,25 @@
-{"name":"MOTIONS","short_name":"MOTIONS","description":"Your day, in order.","start_url":"./","display":"standalone","background_color":"#071116","theme_color":"#071116","orientation":"portrait-primary","icons":[{"src":"./favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
+{
+  "name": "MOTIONS",
+  "short_name": "MOTIONS",
+  "description": "Your day, in order.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#071116",
+  "theme_color": "#071116",
+  "icons": [
+    {
+      "src": "./apple-touch-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./apple-touch-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
