@@ -56,3 +56,196 @@
   .app .intro { margin: 17px 0 12px; }
   .app .copy h2 { font-size: 54px; }
 }
+
+/* Shared Motion library editor */
+.library-tools {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.library-tools .page { margin: 0; }
+.library-tools > button,
+.empty-motions button {
+  flex: 0 0 auto;
+  border: 1px solid #d6a44380;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: #d6a44318;
+  color: #f4efe5;
+  font: 700 9px "DM Sans";
+  letter-spacing: .12em;
+}
+.motion-card-wrap {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 3px;
+}
+.motion-card-wrap:nth-child(3n + 2) { margin-top: 26px; }
+.motion-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  background: #10201c;
+  color: #f4efe5;
+  text-align: left;
+}
+.motion-card > em {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform .35s ease;
+}
+.motion-card:active > em { transform: scale(1.025); }
+.motion-card > div {
+  position: absolute;
+  inset: auto 13px 14px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  text-shadow: 0 2px 16px #000;
+}
+.motion-card > div span { font-size: 7px; letter-spacing: .14em; }
+.motion-card > div b { font-family: "Bebas Neue"; font-size: 25px; line-height: .9; }
+.card-menu,
+.more-button {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #ffffff2b;
+  border-radius: 50%;
+  background: #071116c9;
+  color: #f4efe5;
+  font-size: 18px;
+  letter-spacing: .08em;
+}
+.card-menu { position: absolute; top: 8px; left: 8px; }
+.motion .list header { justify-content: space-between; }
+.saving {
+  position: fixed;
+  z-index: 80;
+  left: 50%;
+  bottom: 92px;
+  translate: -50% 0;
+  border-radius: 999px;
+  padding: 8px 13px;
+  background: #f4efe5;
+  color: #071116;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+.empty-motions {
+  display: grid;
+  place-items: center;
+  gap: 16px;
+  min-height: 45dvh;
+  color: #a2aaa5;
+  text-align: center;
+}
+.editor-backdrop,
+.actions-backdrop {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: end center;
+  padding: 18px;
+  background: #020708d9;
+  backdrop-filter: blur(10px);
+}
+.motion-editor,
+.motion-actions {
+  width: min(100%, 480px);
+  max-height: calc(100dvh - 36px);
+  overflow: auto;
+  border: 1px solid #ffffff1f;
+  border-radius: 24px;
+  padding: 22px;
+  background: #0d1918;
+  box-shadow: 0 24px 80px #000b;
+}
+.motion-editor header,
+.motion-actions header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.motion-editor h2,
+.motion-actions h2 {
+  margin: 0;
+  font-family: "Bebas Neue";
+  font-size: 32px;
+  letter-spacing: .03em;
+}
+.motion-editor header button,
+.motion-actions header button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #ffffff1f;
+  border-radius: 50%;
+  background: transparent;
+  color: #f4efe5;
+}
+.motion-editor label {
+  display: grid;
+  gap: 7px;
+  margin: 13px 0;
+  color: #a2aaa5;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+.motion-editor input,
+.motion-editor textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ffffff1f;
+  border-radius: 12px;
+  padding: 12px;
+  background: #071116;
+  color: #f4efe5;
+  font: 14px "DM Sans";
+}
+.motion-editor textarea { min-height: 118px; resize: vertical; }
+.editor-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.editor-save {
+  width: 100%;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 999px;
+  padding: 15px;
+  background: #d6a443;
+  color: #071116;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .13em;
+}
+.motion-actions { padding-bottom: max(22px, env(safe-area-inset-bottom)); }
+.motion-actions > button {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid #ffffff14;
+  padding: 16px 3px;
+  background: transparent;
+  color: #f4efe5;
+  text-align: left;
+  font: 600 14px "DM Sans";
+}
+.motion-actions > button:disabled { opacity: .3; }
+.motion-actions > button.danger { color: #ef8a7e; }
+
+@media (min-width: 700px) {
+  .editor-backdrop,
+  .actions-backdrop { place-items: center; }
+}
