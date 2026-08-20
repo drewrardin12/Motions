@@ -62,6 +62,18 @@ export type HouseholdMember = { id: string; name: string; is_admin: boolean };
 export type HouseholdState = { household_id: string; household_name: string; members: HouseholdMember[]; remembered_member_id?: string | null };
 export type ProgressRow = { period_key: string; item_type: string; item_id: string; completed: boolean; updated_by_name: string | null; updated_at: string };
 export type SharedMotion = { id: string; title: string; label: string; time: string; image: string; accent: string; message: string; tasks: string[] };
+export type RhythmRecurrence = "daily" | "weekly" | "monthly" | "custom";
+export type SharedRhythm = {
+  id: string;
+  title: string;
+  category: string;
+  assignee: "Everyone" | "Andrew" | "Abby";
+  recurrence: RhythmRecurrence;
+  days: number[];
+  dayOfMonth: number;
+  intervalDays: number;
+  startDate: string;
+};
 
 export const householdApi = {
   mine: () => rpc<HouseholdState | null>("get_my_household"),
@@ -81,5 +93,10 @@ export const householdApi = {
   saveMotions: (memberId: string, motions: SharedMotion[]) => rpc<boolean>("save_household_motions", {
     p_member_id: memberId,
     p_motions: motions,
+  }),
+  rhythms: () => rpc<SharedRhythm[]>("get_household_rhythms"),
+  saveRhythms: (memberId: string, rhythms: SharedRhythm[]) => rpc<boolean>("save_household_rhythms", {
+    p_member_id: memberId,
+    p_rhythms: rhythms,
   }),
 };
