@@ -219,6 +219,16 @@
   font: 14px "DM Sans";
 }
 .motion-editor textarea { min-height: 118px; resize: vertical; }
+.step-editor { display: grid; gap: 10px; margin: 0 0 14px; }
+.step-row { display: grid; grid-template-columns: 28px minmax(0,1fr); gap: 8px; align-items: center; padding: 10px; border: 1px solid #ffffff14; border-radius: 14px; background: #071116; }
+.step-number { grid-row: 1 / span 2; color: #d6a443; font: 700 12px "DM Sans"; text-align: center; }
+.step-row input { padding: 10px; }
+.step-actions { display: flex; gap: 6px; }
+.step-actions button,
+.add-step { border: 1px solid #ffffff1f; border-radius: 999px; padding: 7px 10px; background: transparent; color: #aeb7b1; font: 700 8px "DM Sans"; letter-spacing: .08em; }
+.step-actions button:disabled { opacity: .25; }
+.step-actions .remove-step { margin-left: auto; color: #ef8a7e; }
+.add-step { justify-self: start; padding: 10px 14px; color: #d6a443; }
 .editor-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .editor-save {
   width: 100%;
