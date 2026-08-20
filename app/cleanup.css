@@ -230,17 +230,28 @@
 .step-actions .remove-step { margin-left: auto; color: #ef8a7e; }
 .add-step { justify-self: start; padding: 10px 14px; color: #d6a443; }
 .editor-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.editor-save {
-  width: 100%;
-  margin-top: 12px;
-  border: 0;
+.editor-actions {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: 10px;
+  margin-top: 20px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.editor-actions button {
+  min-height: 48px;
+  border: 1px solid #ffffff1f;
   border-radius: 999px;
-  padding: 15px;
-  background: #d6a443;
-  color: #071116;
+  padding: 13px 14px;
+  background: transparent;
+  color: #f4efe5;
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: .13em;
+  letter-spacing: .11em;
+}
+.editor-actions .save {
+  border-color: #d6a443;
+  background: #d6a443;
+  color: #071116;
 }
 .motion-actions { padding-bottom: max(22px, env(safe-area-inset-bottom)); }
 .motion-actions > button {
