@@ -309,33 +309,151 @@
   font-weight: 800;
   letter-spacing: .1em;
 }
-.rhythm-list { border-top: 1px solid #ffffff14; }
-.rhythm-list article {
-  min-height: 88px;
+.rhythm-list {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 40px;
-  align-items: center;
-  gap: 11px;
-  border-bottom: 1px solid #ffffff14;
-  transition: opacity .2s ease;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding-bottom: 14px;
 }
-.rhythm-list article.done { opacity: .55; }
-.rhythm-list article.done b { text-decoration: line-through; }
+.rhythm-list article {
+  position: relative;
+  min-height: 158px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 18px;
+  overflow: hidden;
+  border: 1px solid #ffffff1f;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #1b332b, #0c1a17);
+  box-shadow: 0 13px 28px #0004;
+  cursor: pointer;
+  transition: transform .16s ease, border-color .2s ease, background .2s ease;
+}
+.rhythm-list article:nth-child(3n + 2) { background: linear-gradient(145deg, #3c2924, #171110); }
+.rhythm-list article:nth-child(3n) { background: linear-gradient(145deg, #30341f, #15180e); }
+.rhythm-list article:nth-child(5n) { grid-column: span 2; min-height: 124px; }
+.rhythm-list article:active { transform: scale(.975); }
+.rhythm-list article:focus-visible { outline: 2px solid #d6a443; outline-offset: 2px; }
+.rhythm-list article.done { border-color: #d6a44399; background: linear-gradient(145deg, #3a4025, #172117); }
+.rhythm-list article.done::after {
+  content: "DONE";
+  position: absolute;
+  right: 15px;
+  bottom: 13px;
+  color: #d6a443;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: .17em;
+}
 .rhythm-check {
-  width: 34px;
-  height: 34px;
+  width: 46px;
+  height: 46px;
   border: 1px solid #ffffff32;
   border-radius: 50%;
-  background: transparent;
+  background: #ffffff08;
   color: transparent;
-  font-size: 16px;
+  font-size: 19px;
 }
 .done .rhythm-check { border-color: #d6a443; background: #d6a443; color: #071116; }
-.rhythm-list article > div { min-width: 0; display: grid; gap: 4px; }
+.rhythm-list article > div { min-width: 0; display: grid; gap: 6px; padding-right: 22px; }
 .rhythm-list small { color: #d6a443; font-size: 8px; font-weight: 800; letter-spacing: .12em; }
-.rhythm-list b { overflow: hidden; color: #f4efe5; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; }
+.rhythm-list b { color: #f4efe5; font: 600 25px/1 "Barlow Condensed"; text-transform: uppercase; }
 .rhythm-list label { color: #929d98; font-size: 10px; }
+
+/* Icon-only navigation and fluid movement */
+.app > nav {
+  height: 70px;
+  padding: 7px 14px calc(7px + env(safe-area-inset-bottom));
+}
+.app > nav button {
+  position: relative;
+  min-width: 54px;
+  gap: 0;
+  transition: transform .3s cubic-bezier(.22,1,.36,1), color .25s ease, background-color .25s ease;
+}
+.app > nav button .nav-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.app > nav button i {
+  transition: transform .34s cubic-bezier(.22,1,.36,1), color .25s ease, filter .25s ease;
+}
+.app > nav button::after {
+  content: "";
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: #d6a443;
+  opacity: 0;
+  transform: translateX(-50%) scaleX(.25);
+  transition: opacity .25s ease, transform .34s cubic-bezier(.22,1,.36,1);
+}
+.app > nav button.on::after { opacity: 1; transform: translateX(-50%) scaleX(1); }
+.app > nav button.on i { transform: translateY(-2px) scale(1.1); filter: drop-shadow(0 3px 8px #d6a44355); }
+.app > nav button:active { transform: scale(.9); }
+
+.app > .screen {
+  animation: screen-arrive .42s cubic-bezier(.22,1,.36,1) both;
+  transform-origin: 50% 90%;
+}
+@keyframes screen-arrive {
+  from { opacity: 0; transform: translate3d(0,10px,0) scale(.992); }
+  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+}
+.app .deck article.card-next { animation: card-next .48s cubic-bezier(.22,1,.36,1) both; }
+.app .deck article.card-prev { animation: card-prev .48s cubic-bezier(.22,1,.36,1) both; }
+@keyframes card-next {
+  from { opacity: .25; transform: translate3d(34px,0,0) rotate(.8deg) scale(.985); }
+  to { opacity: 1; transform: translate3d(0,0,0) rotate(0) scale(1); }
+}
+@keyframes card-prev {
+  from { opacity: .25; transform: translate3d(-34px,0,0) rotate(-.8deg) scale(.985); }
+  to { opacity: 1; transform: translate3d(0,0,0) rotate(0) scale(1); }
+}
+.app .deck .back {
+  transition: transform .45s cubic-bezier(.22,1,.36,1), opacity .35s ease, background-color .35s ease;
+}
+.app .controls button,
+.app .motion-card-wrap,
+.app .rhythm-list article,
+.app .people button,
+.app .tasks button {
+  transition: transform .28s cubic-bezier(.22,1,.36,1), border-color .25s ease, background-color .25s ease, box-shadow .3s ease, opacity .25s ease;
+}
+.app .controls button:active,
+.app .motion-card-wrap:active,
+.app .rhythm-list article:active,
+.app .people button:active,
+.app .tasks button:active { transform: scale(.96); }
+.editor-backdrop, .actions-backdrop { animation: veil-in .22s ease both; }
+.motion-editor, .motion-actions { animation: sheet-in .38s cubic-bezier(.22,1,.36,1) both; }
+@keyframes veil-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sheet-in { from { opacity: 0; transform: translate3d(0,28px,0) scale(.985); } to { opacity: 1; transform: translate3d(0,0,0) scale(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .app *, .app *::before, .app *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
 .rhythm-menu {
+  position: absolute;
+  top: 12px;
+  right: 10px;
   width: 38px;
   height: 38px;
   border: 0;
@@ -343,6 +461,30 @@
   background: #ffffff0a;
   color: #f4efe5;
   font-size: 19px;
+}
+
+.profile-people i { position: relative; overflow: hidden; }
+.profile-people i span { position: relative; z-index: 0; }
+.profile-people i img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.profile-people i.a img { object-position: center 24%; }
+.profile-people i.b img { object-position: center 20%; }
+
+.app > nav i svg {
+  display: block;
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 @media (min-width: 700px) {
