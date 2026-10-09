@@ -23,7 +23,7 @@ const dateKey=()=>{const d=new Date(),p=(n:number)=>String(n).padStart(2,"0");re
 const weekKey=()=>{const d=new Date(),day=(d.getDay()+6)%7,p=(n:number)=>String(n).padStart(2,"0");d.setDate(d.getDate()-day);return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`};
 const monthKey=()=>dateKey().slice(0,7);
 const rhythmPeriod=(r:SharedRhythm)=>r.recurrence==="daily"?`rhythm-day:${dateKey()}`:r.recurrence==="weekly"?`rhythm-week:${weekKey()}`:r.recurrence==="monthly"?`rhythm-month:${monthKey()}`:`rhythm-custom:${r.id}:${Math.max(0,Math.floor((new Date(dateKey()+"T12:00:00").getTime()-new Date(r.startDate+"T12:00:00").getTime())/86400000/Math.max(1,r.intervalDays)))}`;
-const weeklyDueToday=(r:SharedRhythm)=>r.recurrence==="weekly"&&r.days.includes(new Date().getDay());
+const weeklyDueToday=(r:SharedRhythm)=>r.recurrence==="weekly"&&r.days.some(day=>Number(day)===new Date().getDay());
 const rhythmGroups:{recurrence:RhythmRecurrence|"due-today";title:string}[]=[{recurrence:"due-today",title:"Due today"},{recurrence:"daily",title:"Daily"},{recurrence:"weekly",title:"Weekly"},{recurrence:"monthly",title:"Monthly"},{recurrence:"custom",title:"Custom intervals"}];
 const rhythmSchedule=(r:SharedRhythm)=>r.recurrence==="daily"?"DAILY":r.recurrence==="weekly"?`WEEKLY · ${r.days.length?r.days.map(d=>["SUN","MON","TUE","WED","THU","FRI","SAT"][d]).join(" · "):"ANY DAY"}`:r.recurrence==="monthly"?`MONTHLY · DAY ${r.dayOfMonth}`:`EVERY ${r.intervalDays} DAYS`;
 const rhythmDefaults:SharedRhythm[]=[...daily.map((title,i)=>({id:`daily-${i}`,title,category:"Personal",assignee:"Everyone" as const,recurrence:"daily" as const,days:[],dayOfMonth:1,intervalDays:2,startDate:dateKey()})),...weekly.map((title,i)=>({id:`weekly-${i}`,title,category:"Household",assignee:"Everyone" as const,recurrence:"weekly" as const,days:[1],dayOfMonth:1,intervalDays:7,startDate:dateKey()}))];
@@ -56,7 +56,7 @@ function MotionActions({index,total,onClose,onEdit,onDuplicate,onMove,onDelete}:
 }
 
 function RhythmEditor({rhythm,onCancel,onSave}:{rhythm:SharedRhythm|null;onCancel:()=>void;onSave:(rhythm:SharedRhythm)=>void}){
-  const [draft,setDraft]=useState<SharedRhythm>(()=>rhythm?{...rhythm,days:[...rhythm.days]}:{id:`rhythm-${Date.now()}`,title:"",category:"Household",assignee:"Everyone",recurrence:"daily",days:[1],dayOfMonth:1,intervalDays:2,startDate:dateKey()});
+  const [draft,setDraft]=useState<SharedRhythm>(()=>rhythm?{...rhythm,days:rhythm.days.map(Number)}:{id:`rhythm-${Date.now()}`,title:"",category:"Household",assignee:"Everyone",recurrence:"daily",days:[1],dayOfMonth:1,intervalDays:2,startDate:dateKey()});
   const recurrence=(value:RhythmRecurrence)=>setDraft({...draft,recurrence:value});
   return <div className="editor-backdrop"><form className="motion-editor rhythm-editor" onSubmit={e=>{e.preventDefault();if(draft.title.trim())onSave({...draft,title:draft.title.trim(),category:draft.category.trim()||"Household"})}}>
     <header><div><small>{rhythm?"UPDATE RHYTHM":"NEW RHYTHM"}</small><h2>{rhythm?"Edit Rhythm":"Create Rhythm"}</h2></div><button type="button" onClick={onCancel}>×</button></header>
