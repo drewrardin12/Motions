@@ -41,6 +41,12 @@ jobs:
       - name: Install project dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      - name: Verify household behavior
+        run: pnpm test
+
+      - name: Check app types
+        run: pnpm run typecheck
+
       - name: Build MOTIONS
         run: pnpm run build:github
 

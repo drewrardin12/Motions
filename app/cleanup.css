@@ -315,7 +315,7 @@
   gap: 10px;
   padding-bottom: 14px;
 }
-.rhythm-list article {
+.rhythm-list > .rhythm-row {
   position: relative;
   min-height: 158px;
   padding: 16px;
@@ -332,13 +332,13 @@
   cursor: pointer;
   transition: transform .16s ease, border-color .2s ease, background .2s ease;
 }
-.rhythm-list article:nth-child(3n + 2) { background: linear-gradient(145deg, #3c2924, #171110); }
-.rhythm-list article:nth-child(3n) { background: linear-gradient(145deg, #30341f, #15180e); }
-.rhythm-list article:nth-child(5n) { grid-column: span 2; min-height: 124px; }
-.rhythm-list article:active { transform: scale(.975); }
-.rhythm-list article:focus-visible { outline: 2px solid #d6a443; outline-offset: 2px; }
-.rhythm-list article.done { border-color: #d6a44399; background: linear-gradient(145deg, #3a4025, #172117); }
-.rhythm-list article.done::after {
+.rhythm-list > .rhythm-row:nth-child(3n + 2) { background: linear-gradient(145deg, #3c2924, #171110); }
+.rhythm-list > .rhythm-row:nth-child(3n) { background: linear-gradient(145deg, #30341f, #15180e); }
+.rhythm-list > .rhythm-row:nth-child(5n) { grid-column: span 2; min-height: 124px; }
+.rhythm-list > .rhythm-row:active { transform: scale(.975); }
+.rhythm-list > .rhythm-row:focus-visible { outline: 2px solid #d6a443; outline-offset: 2px; }
+.rhythm-list > .rhythm-row.done { border-color: #d6a44399; background: linear-gradient(145deg, #3a4025, #172117); }
+.rhythm-list > .rhythm-row.done::after {
   content: "DONE";
   position: absolute;
   right: 15px;
@@ -358,7 +358,7 @@
   font-size: 19px;
 }
 .done .rhythm-check { border-color: #d6a443; background: #d6a443; color: #071116; }
-.rhythm-list article > div { min-width: 0; display: grid; gap: 6px; padding-right: 22px; }
+.rhythm-list > .rhythm-row > div { min-width: 0; display: grid; gap: 6px; padding-right: 22px; }
 .rhythm-list small { color: #d6a443; font-size: 8px; font-weight: 800; letter-spacing: .12em; }
 .rhythm-list b { color: #f4efe5; font: 600 25px/1 "Barlow Condensed"; text-transform: uppercase; }
 .rhythm-list label { color: #929d98; font-size: 10px; }
@@ -428,14 +428,14 @@
 }
 .app .controls button,
 .app .motion-card-wrap,
-.app .rhythm-list article,
+.app .rhythm-list > .rhythm-row,
 .app .people button,
 .app .tasks button {
   transition: transform .28s cubic-bezier(.22,1,.36,1), border-color .25s ease, background-color .25s ease, box-shadow .3s ease, opacity .25s ease;
 }
 .app .controls button:active,
 .app .motion-card-wrap:active,
-.app .rhythm-list article:active,
+.app .rhythm-list > .rhythm-row:active,
 .app .people button:active,
 .app .tasks button:active { transform: scale(.96); }
 .editor-backdrop, .actions-backdrop { animation: veil-in .22s ease both; }
