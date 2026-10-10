@@ -7,10 +7,8 @@ if("serviceWorker" in navigator)window.addEventListener("load",async()=>{
   try{
     const registration=await navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"});
     const offerRefresh=()=>{
-      if(document.getElementById("app-update"))return;
-      const notice=document.createElement("div");notice.id="app-update";notice.setAttribute("role","status");
-      notice.append("A MOTIONS update is ready. ");
-      const button=document.createElement("button");button.textContent="REFRESH APP";button.onclick=()=>window.location.reload();notice.append(button);document.body.append(notice);
+      document.documentElement.dataset.motionsUpdate="ready";
+      window.dispatchEvent(new Event("motions-update-ready"));
     };
     let hadController=Boolean(navigator.serviceWorker.controller);
     navigator.serviceWorker.addEventListener("controllerchange",()=>{if(hadController)offerRefresh();hadController=true;});
