@@ -10,3 +10,8 @@
 .rhythm-group-due{border-color:#f0c66c;background:linear-gradient(135deg,#d6a44324,#d6a4430b);box-shadow:0 0 24px #d6a44314}.rhythms .rhythm-group-due .rhythm-group-heading h3{color:#ffe1a0}.rhythm-group-due .rhythm-group-heading span{color:#e3c67c}
 
 #app-update{position:fixed;z-index:1000;top:env(safe-area-inset-top,0px);left:0;right:0;padding:14px;background:#19251d;color:#ffe1a0;font:12px sans-serif;text-align:center;border-bottom:1px solid #d6a443}#app-update button{margin-left:8px;padding:8px;border:1px solid #d6a443;background:#d6a443;color:#071116;border-radius:4px;font-weight:700}
+
+/* Use the app's own completion feedback instead of native touch-button effects. */
+.motion button,.app button{-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.motion .tasks>button{position:relative;border-radius:0;isolation:isolate;overflow:hidden}
+.motion .tasks>button>i{flex:none;min-width:26px;max-width:26px;min-height:26px;max-height:26px;overflow:hidden}
