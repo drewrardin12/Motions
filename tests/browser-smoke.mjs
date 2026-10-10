@@ -42,18 +42,18 @@ try{
  await a.page.getByLabel('ANDREW’S 4-DIGIT PIN').fill('1234');await a.page.getByLabel('ABBY’S 4-DIGIT PIN').fill('5678');
  await a.page.getByRole('button',{name:'CREATE HOUSEHOLD',exact:true}).click();await waitForText(a.page,'AB12-CD34');await unlock(a.page,'Andrew','1234');
  const b=await phone();await b.page.getByRole('button',{name:'JOIN WITH A SETUP CODE'}).click();await b.page.getByLabel('HOUSEHOLD SETUP CODE').fill('AB12-CD34');await b.page.getByRole('button',{name:'CONNECT THIS DEVICE'}).click();await unlock(b.page,'Abby','5678');
- await a.page.getByRole('button',{name:'OPEN MOTION'}).click();await a.page.locator('.tasks button').first().click();
- await b.page.getByRole('button',{name:'OPEN MOTION'}).click();await b.page.locator('.tasks button.done').waitFor({timeout:12000});assert.equal(await b.page.locator('.tasks button.done').count(),1);
+ await a.page.getByRole('button',{name:'OPEN MOTION'}).click();await a.page.locator('.tasks .motion-task').first().click();
+ await b.page.getByRole('button',{name:'OPEN MOTION'}).click();await b.page.locator('.tasks .motion-task.done').waitFor({timeout:12000});assert.equal(await b.page.locator('.tasks .motion-task.done').count(),1);
  await a.page.locator('.list header .more-button').click();await a.page.getByRole('button',{name:'Edit motion',exact:true}).click();
  await a.page.getByLabel('Step 1',{exact:true}).fill('Wake up refreshed');await a.page.locator('.step-row').first().getByRole('button',{name:'DOWN',exact:true}).click();await a.page.getByRole('button',{name:'SAVE MOTION',exact:true}).click();
  await waitForText(a.page,'Shared household up to date');await b.page.getByText('Wake up refreshed',{exact:true}).waitFor({timeout:12000});
- assert.equal(await b.page.locator('.tasks button.done span').innerText(),'Wake up refreshed');
+ assert.equal(await b.page.locator('.tasks .motion-task.done span').innerText(),'Wake up refreshed');
  // Simulate losing the household connection while keeping the local test app reachable for reload.
  b.device.offline=true;await b.page.evaluate(()=>{localStorage.setItem('test-offline','yes');window.dispatchEvent(new Event('offline'))});
- await b.page.locator('.tasks button').first().click();await b.page.reload();await waitForText(b.page,'Offline · changes saved on this phone');
+ await b.page.locator('.tasks .motion-task').first().click();await b.page.reload();await waitForText(b.page,'Offline · changes saved on this phone');
  await b.page.getByRole('button',{name:'OPEN MOTION'}).click();
  // Completion screen is transient; cached completion still appears on the checklist after re-opening.
- assert.equal(await b.page.locator('.tasks button.done').count(),2);
+ assert.equal(await b.page.locator('.tasks .motion-task.done').count(),2);
  b.device.offline=false;await b.page.evaluate(()=>{localStorage.removeItem('test-offline');window.dispatchEvent(new Event('online'))});await waitForText(b.page,'Shared household up to date');
  await a.page.getByText('2 OF 2 COMPLETE',{exact:false}).first().waitFor({timeout:12000});await a.page.getByRole('button',{name:'ONE AT A TIME'}).click();await waitForText(a.page,'Morning is moving.');
  // A fully completed checklist must still offer an exit/reset in Focus Mode.
