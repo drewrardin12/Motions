@@ -38,6 +38,8 @@ Supabase anonymous sessions identify each device. A private setup code connects 
 
 `app/sync.ts` maintains a household-scoped local snapshot and persistent pending-write queue. Local changes are kept while requests run and survive reloads. Failed updates retry on reconnect, on the three-second refresh cycle, or with the visible Retry button. Cached progress is filtered by the current day or Rhythm period. A previously remembered profile can open cached data while the household connection is unavailable; selecting another profile still requires PIN verification online.
 
+On the first open each day, Today asks which Motions the household needs. The selection is shared, can be edited with Choose Today’s Motions, and filters only the Today carousel. Completed selections move to the back in grey; All Motions remains unchanged. Selections use existing shared progress storage under a separate `plan-day:YYYY-MM-DD` period (`motion` items `include:<motion-id>` and `plan-ready`), so they do not count as completions or activity.
+
 Empty remote libraries are authoritative. Starter Motions or Rhythms are added only through an explicit button in the empty state, preventing deleted routines from being recreated on another phone.
 
 Each Motion carries parallel `tasks` and `taskIds` arrays. Existing steps initially keep their numeric IDs, preserving previously saved completion records. Renaming/reordering moves the ID with its step; added steps receive new IDs. Duplicate task text is supported. Removed step IDs are never reused.

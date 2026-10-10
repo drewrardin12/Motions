@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import ts from 'typescript';
 const source = await readFile(new URL('../app/sync.ts', import.meta.url), 'utf8');
 const compiled = ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ES2022}}).outputText;
-const {HouseholdSync, normalizeMotion, taskKey, taskIndex, visibleProgress} = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
+const {HouseholdSync, normalizeMotion, taskKey, taskIndex, visibleProgress, dailyMotionPlan} = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
 const day='day:2026-10-09';
 const motion=normalizeMotion({id:'morning',title:'Morning',tasks:['Same','Same'],label:'',time:'',image:'',accent:'#d6a443',message:'Done'});
 const rhythm={id:'water',title:'Water',recurrence:'daily',category:'Personal',assignee:'Everyone',days:[],dayOfMonth:1,intervalDays:1,startDate:'2026-10-09'};
@@ -96,4 +96,26 @@ test('a concurrent library write is rejected, then a fresh retry merges both pho
  b.editMotions(b.snapshot.motions.map(m=>m.id==='dinner'?{...m,title:'Abby edit'}:m));await b.cycle([day]);
  pause.resolve();await flight;assert.equal(a.status,'error');assert.equal(a.pending,true);
  hold=false;await a.cycle([day]);assert.deepEqual(f.data.motions.map(m=>m.title),['Andrew edit','Abby edit']);assert.equal(a.pending,false);
+});
+
+test('daily Motion selection is shared, survives reload, permits an empty day, and resets tomorrow',async()=>{
+ const f=fixture(),a=f.make('phone-a'),b=f.make('phone-b','abby'),plan='plan-day:2026-10-10';
+ assert.equal(dailyMotionPlan(visibleProgress(a.snapshot,[plan]),plan),null);
+ a.chooseDailyMotions(plan,['morning','dinner'],['morning'],'Andrew');
+ await a.cycle([day,plan]);await b.cycle([day,plan]);
+ assert.deepEqual(dailyMotionPlan(visibleProgress(b.snapshot,[plan]),plan),['morning']);
+ assert.deepEqual(dailyMotionPlan(visibleProgress(f.make('phone-a').snapshot,[plan]),plan),['morning']);
+ assert.equal(visibleProgress(b.snapshot,[day]).length,0);
+ b.chooseDailyMotions(plan,['morning','dinner'],[],'Abby');
+ await b.cycle([plan]);await a.cycle([plan]);
+ assert.deepEqual(dailyMotionPlan(visibleProgress(a.snapshot,[plan]),plan),[]);
+ assert.equal(dailyMotionPlan(visibleProgress(a.snapshot,['plan-day:2026-10-11']),'plan-day:2026-10-11'),null);
+ assert.equal(a.snapshot.motions.length,1);
+});
+test('daily choices survive offline storage and share on reconnect',async()=>{
+ const f=fixture(),plan='plan-day:2026-10-10',a=f.make('phone-a');
+ a.chooseDailyMotions(plan,['morning'],['morning'],'Andrew');await a.cycle([plan],false);
+ const reopened=f.make('phone-a');assert.deepEqual(dailyMotionPlan(visibleProgress(reopened.snapshot,[plan]),plan),['morning']);
+ await reopened.cycle([plan]);const b=f.make('phone-b','abby');await b.cycle([plan]);
+ assert.deepEqual(dailyMotionPlan(visibleProgress(b.snapshot,[plan]),plan),['morning']);
 });

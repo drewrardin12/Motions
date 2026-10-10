@@ -50,6 +50,13 @@ export function visibleProgress(snapshot: Snapshot, periods: string[]): Progress
   return [...rows.values()].filter(row => periods.includes(row.period_key));
 }
 
+// Daily selection has its own period, so it never counts as task completion.
+export function dailyMotionPlan(rows: ProgressRow[], period: string): string[] | null {
+  const plan=rows.filter(r=>r.period_key===period&&r.item_type==='motion');
+  if(!plan.some(r=>r.item_id==='plan-ready'&&r.completed))return null;
+  return plan.filter(r=>r.completed&&r.item_id.startsWith('include:')).map(r=>r.item_id.slice(8));
+}
+
 // One serialized cycle per household. Pending changes are persisted before any network call.
 export class HouseholdSync {
   snapshot: Snapshot;
@@ -95,6 +102,10 @@ export class HouseholdSync {
       updated_at: new Date().toISOString(), memberId: this.memberId, version: ++this.revision};
     this.snapshot.writes = [...this.snapshot.writes.filter(w => keyOf(w) !== keyOf(write)), write];
     this.status = 'saving'; this.persist();
+  }
+  chooseDailyMotions(period: string, motionIds: string[], selected: string[], name: string) {
+    for(const id of motionIds)this.complete(period,'motion',`include:${id}`,selected.includes(id),name);
+    this.complete(period,'motion','plan-ready',true,name);
   }
   cycle(periods: string[], online = true): Promise<void> {
     if (this.active) return this.active;
