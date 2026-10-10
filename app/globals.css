@@ -17,3 +17,8 @@
 .motion .tasks>.motion-task>i{flex:none;min-width:26px;max-width:26px;min-height:26px;max-height:26px;overflow:hidden}
 
 .motion-task{-webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer}.motion-task:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}.motion-task>i>svg{display:block;width:16px;height:16px}
+
+/* Keep the checklist photo in its own page background, not overlapping fixed layers. */
+.motion{background-color:#061012;background-image:linear-gradient(#0207074d,#061012 42%),var(--photo);background-position:center top;background-size:100% 100dvh,auto 100dvh;background-repeat:no-repeat}
+.motion .tasks{position:relative;isolation:isolate}
+.motion .tasks>.motion-task{contain:paint;transform:none;transition:none}
