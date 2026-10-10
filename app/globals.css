@@ -27,3 +27,6 @@
 .sync-notice .app-version{flex:0 0 auto;font-size:9px;opacity:.75}
 
 html,body,#root,.motion,.motion *{-webkit-tap-highlight-color:transparent!important}
+
+/* Completed cards stay readable and reopenable at the back of today's carousel. */
+.app .deck article.motion-closed{filter:grayscale(1);opacity:.65}
