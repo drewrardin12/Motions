@@ -5,6 +5,7 @@ const AUTH_KEY = "motions-supabase-auth";
 type Session = { access_token: string; refresh_token: string; expires_at?: number; expires_in?: number };
 let signingIn: Promise<Session> | null = null;
 export class HouseholdConnectionError extends Error {}
+export class HouseholdSessionExpiredError extends Error { constructor(){super("This phone’s household session expired. Reconnect this device with your setup code.");} }
 
 async function request(url: string, options: RequestInit) {
   return fetch(url, {...options, signal: AbortSignal.timeout(15000)});
@@ -44,7 +45,7 @@ async function obtainSession(): Promise<Session> {
   if (saved) {
     const refreshed = await refreshSession(saved);
     if (refreshed) return refreshed;
-    throw new Error("This phone’s household session expired. Reconnect this device with your setup code.");
+    throw new HouseholdSessionExpiredError();
   }
   const res = await request(`${SUPABASE_URL}/auth/v1/signup`, {
     method: "POST",
@@ -75,12 +76,13 @@ export async function rpc<T>(name: string, body: Record<string, unknown> = {}): 
   let res = await request(`${SUPABASE_URL}/rest/v1/rpc/${name}`, options);
   if (res.status === 401) {
     const saved=savedSession();
-    if(saved){saved.expires_at=0;localStorage.setItem(AUTH_KEY,JSON.stringify(saved));}
+    if(saved?.access_token===session.access_token){saved.expires_at=0;localStorage.setItem(AUTH_KEY,JSON.stringify(saved));}
     const renewed=await anonymousSession();
     res=await request(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {...options,headers:{...options.headers,Authorization:`Bearer ${renewed.access_token}`}});
   }
   const data = await res.json().catch(() => null);
   if (!res.ok) {
+    if(res.status===401) throw new HouseholdSessionExpiredError();
     const message=data?.message || data?.error || "The household service could not be reached.";
     if(res.status >= 500 || res.status === 429) throw new HouseholdConnectionError(message);
     throw new Error(message);
@@ -108,7 +110,11 @@ export type SharedRhythm = {
 export const householdApi = {
   mine: () => rpc<HouseholdState | null>("get_my_household"),
   create: (andrewPin: string, abbyPin: string) => rpc<{ household: HouseholdState; join_code: string }>("create_motions_household", { p_andrew_pin: andrewPin, p_abby_pin: abbyPin }),
-  join: (code: string) => rpc<HouseholdState>("join_motions_household", { p_join_code: code.toUpperCase().replace(/\s/g, "") }),
+  join: async (code: string) => {
+    const body={p_join_code:code.toUpperCase().replace(/\s/g, "")};
+    try{return await rpc<HouseholdState>("join_motions_household",body);}
+    catch(error){if(!(error instanceof HouseholdSessionExpiredError))throw error;reconnectDevice();return rpc<HouseholdState>("join_motions_household",body);}
+  },
   verify: (memberId: string, pin: string) => rpc<boolean>("verify_member_pin", { p_member_id: memberId, p_pin: pin }),
   remember: (memberId: string, pin: string) => rpc<boolean>("remember_member", { p_member_id: memberId, p_pin: pin }),
   progress: (periodKeys: string[]) => rpc<ProgressRow[]>("get_household_progress", { p_period_keys: periodKeys }),

@@ -40,3 +40,10 @@ test('a temporary refresh outage retains the session and is distinguished from a
  try{const a=await api();await assert.rejects(a.householdApi.motions(),a.HouseholdConnectionError);assert.ok(localStorage.getItem('motions-supabase-auth'))}
  finally{globalThis.fetch=oldFetch;globalThis.localStorage=oldStorage}
 });
+test('explicit setup-code reconnect recovers a rejected refresh without clearing pending household data',async()=>{
+ const oldFetch=globalThis.fetch,oldStorage=globalThis.localStorage;globalThis.localStorage=storage();
+ localStorage.setItem('motions-supabase-auth',JSON.stringify({...session,expires_at:1}));localStorage.setItem('motions-household:test','pending');let signups=0;
+ globalThis.fetch=async(url,options)=>{if(url.includes('/token?'))return response({},400);if(url.includes('/signup')){signups++;return response({...session,access_token:'new-device'})}assert.equal(JSON.parse(options.body).p_join_code,'AB12-CD34');return response({household_id:'test'})};
+ try{const a=await api();assert.equal((await a.householdApi.join('ab12-cd34')).household_id,'test');assert.equal(signups,1);assert.equal(localStorage.getItem('motions-household:test'),'pending')}
+ finally{globalThis.fetch=oldFetch;globalThis.localStorage=oldStorage}
+});
